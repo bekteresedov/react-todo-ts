@@ -1,25 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import Input from "./input/Input";
+import Message from "./message/Message";
+
+interface Messages {
+  id: number;
+  message: string;
+}
 
 function App() {
+  const [message, setMessage] = useState<string>("");
+  const [messages, setMessages] = useState<Messages[]>([]);
+
+  function addItem(): void {
+    if (message) {
+      setMessages([...messages, { id: Date.now(), message }]);
+      setMessage("");
+    } else {
+      alert("Please Add a message");
+    }
+  }
+
+  function deleteItem(id: number): void {
+    setMessages(messages.filter((m) => m.id !== id));
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <div className="App">
+        <Input message={message} setMessage={setMessage} addItem={addItem} />
+        {messages.map((message) => (
+          <Message
+            key={message.id}
+            message={message.message}
+            deleteItem={deleteItem}
+            id={message.id}
+          />
+        ))}
+      </div>
+    </React.Fragment>
   );
 }
 
